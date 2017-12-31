@@ -8,17 +8,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class VersionServiceImpl implements VersionService {
+public class ProjectMetaSvcImpl implements ProjectMetaSvc {
 
-    Logger logger = LoggerFactory.getLogger(VersionServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(ProjectMetaSvcImpl.class);
 
     private String versionFileName;
 
-    private String majorVersionNumber;
-    private String minorVersionNumber;
-    private String maintenanceVersionNumber;
+    private String groupId;
+    private String artifactId;
+    private String version;
 
-    public VersionServiceImpl(String versionFileName) {
+    public ProjectMetaSvcImpl() {
+        versionFileName = "version.properties";
+    }   
+
+    public ProjectMetaSvcImpl(String versionFileName) {
         this.versionFileName = versionFileName;
     }
 
@@ -36,32 +40,32 @@ public class VersionServiceImpl implements VersionService {
             Properties properties = new Properties();
             properties.load(is);
 
-            majorVersionNumber = properties.getProperty("majorVersionNumber", "0");
-            minorVersionNumber = properties.getProperty("minorVersionNumber", "0");
-            maintenanceVersionNumber = properties.getProperty("maintenanceVersionNumber", "0");
+            groupId = properties.getProperty("project.groupId", "");
+            artifactId = properties.getProperty("project.artifactId", "");
+            version = properties.getProperty("project.version", "");
         } catch (IOException e) {
             logger.warn("Unable to load version file", e);
         }
     }
 
     @Override
-    public String getMajorVersionNumber() {
-        return majorVersionNumber;
+    public String getGroupId() {
+        return groupId;
     }
 
     @Override
-    public String getMinorVersionNumber() {
-        return minorVersionNumber;
+    public String getArtifactId() {
+        return artifactId;
     }
 
     @Override
-    public String getMaintenanceVersionNumber() {
-        return maintenanceVersionNumber;
+    public String getVersion() {
+        return version;
     }
 
     @Override
-    public Version getVersion() {
-        return new Version(majorVersionNumber, versionFileName, versionFileName);
+    public ProjectMeta getProjectMeta() {
+        return new ProjectMeta(groupId, artifactId, version);
     }
 
 }
