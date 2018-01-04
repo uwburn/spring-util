@@ -1,4 +1,4 @@
-package it.mgt.util.spring.version;
+package it.mgt.util.spring.meta;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,31 +12,31 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
 
     Logger logger = LoggerFactory.getLogger(ProjectMetaSvcImpl.class);
 
-    private String versionFileName;
+    private String metaFileName;
 
     private String groupId;
     private String artifactId;
     private String version;
 
     public ProjectMetaSvcImpl() {
-        versionFileName = "version.properties";
+        metaFileName = "meta.properties";
     }   
 
-    public ProjectMetaSvcImpl(String versionFileName) {
-        this.versionFileName = versionFileName;
+    public ProjectMetaSvcImpl(String metaFileName) {
+        this.metaFileName = metaFileName;
     }
 
-    public String getVersionFileName() {
-        return versionFileName;
+    public String getMetaFileName() {
+        return metaFileName;
     }
 
-    public void setVersionFileName(String versionFileName) {
-        this.versionFileName = versionFileName;
+    public void setMetaFileName(String metaFileName) {
+        this.metaFileName = metaFileName;
     }
 
     @PostConstruct
     public void load() {
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(versionFileName)) {
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(metaFileName)) {
             Properties properties = new Properties();
             properties.load(is);
 
@@ -44,7 +44,7 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
             artifactId = properties.getProperty("project.artifactId", "");
             version = properties.getProperty("project.version", "");
         } catch (IOException e) {
-            logger.warn("Unable to load version file", e);
+            logger.warn("Unable to load meta file", e);
         }
     }
 
