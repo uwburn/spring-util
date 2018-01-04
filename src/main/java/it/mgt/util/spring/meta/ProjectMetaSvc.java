@@ -1,4 +1,4 @@
-package it.mgt.util.spring.version;
+package it.mgt.util.spring.meta;
 
 public interface ProjectMetaSvc {
     
