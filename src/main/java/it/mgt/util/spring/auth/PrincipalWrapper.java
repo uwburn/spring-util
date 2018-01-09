@@ -14,5 +14,9 @@ public class PrincipalWrapper implements Principal {
     public String getName() {
         return authUser == null ? null : authUser.getUsername();
     }
+
+    public AuthUser unwrap() {
+        return authUser;
+    }
     
 }
