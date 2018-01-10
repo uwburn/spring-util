@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BeanMethodDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BeanMethodDeserializer.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -47,7 +51,8 @@ public class BeanMethodDeserializer extends JsonDeserializer<Object> implements 
         
         try {
             if (!parser.getCurrentToken().equals(JsonToken.START_OBJECT)) {
-                throw new IllegalArgumentException("Unable to load params");
+                LOGGER.warn("An object containing method parameters was expected");
+                throw new BeanMethodDeserializerException("Unable to load params");
             }
 
             JsonNode params = parser.readValueAsTree();
@@ -67,15 +72,23 @@ public class BeanMethodDeserializer extends JsonDeserializer<Object> implements 
                     })
                     .collect(Collectors.toList());
 
-            if (methods.size() > 1)
-                throw new IllegalArgumentException();
+            if (methods.size() == 0) {
+                LOGGER.warn("No method found with name " + ann.method() + " and given parameters");
+                throw new BeanMethodDeserializerException("No method found");
+            }
+            if (methods.size() > 1) {
+                LOGGER.warn("Multiple methods found with name " + ann.method() + " and given parameters");
+                throw new BeanMethodDeserializerException("Multiple methods found");
+            }
 
             Method method = methods.stream()
                     .findFirst()
-                    .orElseThrow(IllegalArgumentException::new);
+                    .get();
 
-            if (!method.getReturnType().isAssignableFrom(type))
-                throw new IllegalArgumentException();
+            if (!method.getReturnType().isAssignableFrom(type)) {
+                LOGGER.warn("Method return type (" + method.getReturnType() + ") is incompatible with parameter type (" + type + ")");
+                throw new BeanMethodDeserializerException("Incompatible method return type");
+            }
 
             Object[] arguments = Arrays.stream(method.getParameters())
                     .map(p -> readValue(params.get(p.getName()), p.getType()))
@@ -83,12 +96,18 @@ public class BeanMethodDeserializer extends JsonDeserializer<Object> implements 
 
             result = method.invoke(bean, arguments);
         }
+        catch (BeanMethodDeserializerException e) {
+            throw e;
+        }
         catch(Exception e) {
+            LOGGER.warn("Deserialization failed", e);
             throw new BeanMethodDeserializerException(e);
         }
         
-        if (single && result == null)
+        if (single && result == null) {
+            LOGGER.warn("Single non-null result was expected, but null value was resolved");
             throw new BeanMethodDeserializerException("Could not deserialize reference entity");
+        }
         
         return result;
     }
