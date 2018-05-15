@@ -11,39 +11,42 @@
     <name>spring-util</name>
     <groupId>it.mgt.util</groupId>
     <artifactId>spring</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <jackson.version>2.9.3</jackson.version>
+        <spring.version>5.0.4.RELEASE</spring.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
     </properties>
 
     <dependencies>
-        <!-- Java EE -->
+        <!-- JPA -->
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
+            <version>${hibernate-jpa-2.1-api.version}</version>
         </dependency>
         <!-- Java Mail -->
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.1</version>
         </dependency>
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.0.2.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- SL4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.10</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <!-- Jackson -->
         <dependency>
@@ -60,7 +63,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.10</version>
+            <version>${slf4j.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
