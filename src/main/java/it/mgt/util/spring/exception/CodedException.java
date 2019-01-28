@@ -9,8 +9,18 @@ public class CodedException extends RuntimeException {
         this.code = code;
     }
 
+    public CodedException(String code, String message, Exception cause) {
+        super(message, cause);
+        this.code = code;
+    }
+
     public CodedException(ErrorDefinition errorDefinition) {
         super(errorDefinition.getMessage());
+        this.code = errorDefinition.getCode();
+    }
+
+    public CodedException(ErrorDefinition errorDefinition, Exception cause) {
+        super(errorDefinition.getMessage(), cause);
         this.code = errorDefinition.getCode();
     }
 
