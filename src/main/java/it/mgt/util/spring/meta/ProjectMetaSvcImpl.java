@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 public class ProjectMetaSvcImpl implements ProjectMetaSvc {
@@ -17,6 +20,7 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
     private String groupId;
     private String artifactId;
     private String version;
+    private String buildTimestamp;
 
     public ProjectMetaSvcImpl() {
         metaFileName = "meta.properties";
@@ -43,8 +47,16 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
             groupId = properties.getProperty("project.groupId", "");
             artifactId = properties.getProperty("project.artifactId", "");
             version = properties.getProperty("project.version", "");
+            buildTimestamp = properties.getProperty("build.timestamp", "");
         } catch (IOException e) {
             logger.warn("Unable to load meta file", e);
+        }
+
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            buildTimestamp = String.valueOf(df.parse(buildTimestamp).getTime());
+        } catch (ParseException e) {
+            logger.warn("Unable to parse build timestamp", e);
         }
     }
 
@@ -61,6 +73,11 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
     @Override
     public String getVersion() {
         return version;
+    }
+
+    @Override
+    public String getBuildTimestamp() {
+        return buildTimestamp;
     }
 
     @Override

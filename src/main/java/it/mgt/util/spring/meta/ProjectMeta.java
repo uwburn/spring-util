@@ -5,6 +5,7 @@ public class ProjectMeta {
     private String groupId;
     private String artifactId;
     private String version;
+    private String buildTimestamp;
 
     public ProjectMeta() {
     }
@@ -13,6 +14,11 @@ public class ProjectMeta {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+    }
+
+    public ProjectMeta(String groupId, String artifactId, String version, String buildTimestamp) {
+        this(groupId, artifactId, version);
+        this.buildTimestamp = buildTimestamp;
     }
 
     public String getGroupId() {
@@ -39,4 +45,11 @@ public class ProjectMeta {
         this.version = version;
     }
 
+    public String getBuildTimestamp() {
+        return buildTimestamp;
+    }
+
+    public void setBuildTimestamp(String buildTimestamp) {
+        this.buildTimestamp = buildTimestamp;
+    }
 }

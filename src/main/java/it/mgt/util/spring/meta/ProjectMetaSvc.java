@@ -7,6 +7,8 @@ public interface ProjectMetaSvc {
     String getArtifactId();
 
     String getVersion();
+
+    String getBuildTimestamp();
     
     ProjectMeta getProjectMeta();
     
