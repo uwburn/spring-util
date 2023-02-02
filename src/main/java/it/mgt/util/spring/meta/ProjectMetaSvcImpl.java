@@ -6,9 +6,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Properties;
 
 public class ProjectMetaSvcImpl implements ProjectMetaSvc {
@@ -53,11 +54,12 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
         }
 
         try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            buildTimestamp = String.valueOf(df.parse(buildTimestamp).getTime());
-        } catch (ParseException e) {
-            logger.warn("Unable to parse build timestamp", e);
-        }
+            if (buildTimestamp.length() > 0) {
+                TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(buildTimestamp);
+                Instant instant = Instant.from(ta);
+                buildTimestamp = String.valueOf(Instant.EPOCH.until(instant, ChronoUnit.MILLIS));
+            }
+        } catch (Exception ignored) { }
     }
 
     @Override
@@ -82,7 +84,7 @@ public class ProjectMetaSvcImpl implements ProjectMetaSvc {
 
     @Override
     public ProjectMeta getProjectMeta() {
-        return new ProjectMeta(groupId, artifactId, version);
+        return new ProjectMeta(groupId, artifactId, version, buildTimestamp);
     }
 
 }
